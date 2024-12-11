@@ -43,15 +43,29 @@ void showWebcamCV() {
 void showImageTestsCV() {
 	string path = "Resources/test.png";
 	cv::Mat img = cv::imread(path);
-	cv::Mat imgGray;
+	cv::Mat imgGray, imgBlur, imgCanny, imgDil, imgErode;
 
 	cv::cvtColor(img, imgGray, cv::COLOR_BGR2GRAY);
+	cv::GaussianBlur(img, imgBlur, cv::Size(7, 7), 5, 0);
+	cv::Canny(imgBlur, imgCanny, 50, 150);
+
+	cv::Mat kernel = cv::getStructuringElement(cv::MORPH_RECT, cv::Size(5, 5));
+
+	cv::dilate(imgCanny, imgDil, kernel);
+	cv::erode(imgDil, imgErode, kernel);
 
 	cv::imshow("Image", img);
+	cv::imshow("Image Gray", imgGray);
+	cv::imshow("Image Blur", imgBlur);
+	cv::imshow("Image Canny", imgCanny);
+	cv::imshow("Image Dialation", imgDil);
+	cv::imshow("Image Erode", imgErode);
+	
 	cv::waitKey(0);
 }
 
 int main() {
+	showImageTestsCV();
 
 	return 0;
 }
