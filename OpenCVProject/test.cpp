@@ -10,13 +10,18 @@ using cv::Size;
 using cv::Rect;
 using cv::Scalar;
 using cv::Point;
+using cv::Point2f;
+
+#define CARD_WIDTH 250
+#define CARD_HEIGHT 350
 
 void showImageCV() {
+	// Path
 	string path = "Resources/test.png";
 	
 	Mat img = cv::imread(path);
-	cv::imshow("Image", img);
 
+	cv::imshow("Image", img);
 	cv::waitKey(0);
 }
 
@@ -138,8 +143,41 @@ void blankImageCreationCV() {
 	cv::waitKey(0);
 }
 
+
+void imageWarpingCV(Mat& matrix, const Mat& imgWarp) {
+	string path = "Resources/cards.jpg";
+	Mat img = cv::imread(path);
+
+	Point2f source[4] = {
+		{ 529, 142 },
+		{ 771, 190 },
+		{ 405, 395 },
+		{ 674, 457 }
+	};
+	Point2f destination[4] = {
+		{ 0.0f, 0.0f },
+		{ CARD_WIDTH, 0.0f },
+		{ 0.0f, CARD_HEIGHT },
+		{ CARD_WIDTH, CARD_HEIGHT }
+	};
+
+	matrix = cv::getPerspectiveTransform(source, destination);
+
+	cv::warpPerspective(img, imgWarp, matrix, Point(CARD_WIDTH, CARD_HEIGHT));
+
+	for (int i = 0; i < 4; i++) {
+		cv::circle(img, source[i], 10, Scalar(0, 0, 255), cv::FILLED);
+	}
+
+	cv::imshow("Image", img);
+	cv::imshow("ImageWarp", imgWarp);
+	cv::waitKey(0);
+}
+
 int main() {
-	blankImageCreationCV();
+	Mat matrix, imgWarp;
+
+	imageWarpingCV(matrix, imgWarp);
 
 	return 0;
 }
